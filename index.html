@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which Hooley Are You?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #111;
+    --dark: #333;
+    --mid: #888;
+    --light: #bbb;
+    --border: #ddd;
+    --surface: #f7f6f3;
+    --white: #fff;
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'Space Grotesk', system-ui, sans-serif;
+    --sp: 24px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    font-weight: 400;
+    color: var(--black);
+    background: var(--surface);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 var(--sp) calc(var(--sp) * 4);
+  }
+
+  .hidden { display: none !important; }
+
+  /* ── Intro ── */
+  .intro {
+    position: relative;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Portrait Gallery ── */
+  .portrait-gallery {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .portrait-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: var(--white);
+    padding: 16px;
+  }
+  .portrait-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #e8e6e1;
+  }
+  .portrait-inner img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 2.2s ease;
+    filter: grayscale(100%) contrast(1.1);
+  }
+  .portrait-inner img.active {
+    opacity: 1;
+  }
+  .portrait-label {
+    position: absolute;
+    bottom: calc(var(--sp) * 1.5);
+    right: var(--sp);
+    text-align: right;
+  }
+  .portrait-label-name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--mid);
+    transition: opacity 0.6s ease;
+    display: block;
+  }
+  .portrait-label-date {
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--light);
+    transition: opacity 0.6s ease;
+  }
+
+  /* ── Intro overlay content ── */
+  .intro-overlay {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: var(--sp);
+    background: linear-gradient(
+      to bottom,
+      rgba(247,246,243,0.95) 0%,
+      rgba(247,246,243,0.6) 20%,
+      transparent 45%,
+      transparent 55%,
+      rgba(247,246,243,0.5) 75%,
+      rgba(247,246,243,0.95) 100%
+    );
+  }
+
+  .intro-tag {
+    position: absolute;
+    top: var(--sp);
+    left: var(--sp);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+
+  .intro-bottom {
+    max-width: 640px;
+  }
+  .intro-bottom h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.8rem, 8vw, 4.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--black);
+    margin-bottom: calc(var(--sp) * 0.75);
+  }
+  .intro-bottom h1 em { font-style: italic; }
+
+  .intro-bottom p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--dark);
+    max-width: 380px;
+    margin-bottom: var(--sp);
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-block;
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: none;
+    border: none;
+    border-bottom: 1.5px solid var(--black);
+    padding: 0 0 4px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  .btn:hover { opacity: 0.5; }
+
+  .btn-fill {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--white);
+    background: var(--black);
+    border: none;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: background 0.25s ease;
+  }
+  .btn-fill:hover { background: var(--dark); }
+
+  .btn-outline {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: none;
+    border: 1.5px solid var(--black);
+    padding: 13px 32px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .btn-outline:hover {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: var(--sp) 0 calc(var(--sp) * 0.5);
+    background: var(--surface);
+    margin-bottom: var(--sp);
+  }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: calc(var(--sp) * 0.5);
+  }
+  .progress-label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+  .progress-bar {
+    height: 1px;
+    background: var(--border);
+    position: relative;
+  }
+  .progress-fill {
+    height: 2px;
+    background: var(--black);
+    position: absolute;
+    top: -0.5px;
+    left: 0;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ── Question ── */
+  .question-card {
+    padding: 0;
+    animation: fadeUp 0.35s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .question-num {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: calc(var(--sp) * 0.5);
+  }
+  .question-card h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--black);
+    margin-bottom: calc(var(--sp) * 1.5);
+  }
+
+  .options { display: flex; flex-direction: column; }
+  .option-btn {
+    width: 100%;
+    text-align: left;
+    padding: calc(var(--sp) * 0.75) 0;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    background: none;
+    color: var(--dark);
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .option-btn:first-child {
+    border-top: 1px solid var(--border);
+  }
+  .option-btn::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background: rgba(0,0,0,0.03);
+    transition: width 0.3s ease;
+  }
+  .option-btn:hover {
+    color: var(--black);
+    padding-left: 16px;
+  }
+  .option-btn:hover::before { width: 100%; }
+  .option-btn.selected {
+    color: var(--black);
+    font-weight: 500;
+    padding-left: 16px;
+    border-color: var(--black);
+  }
+
+  /* ── Result ── */
+  .result {
+    padding-top: 12vh;
+    animation: resultReveal 0.6s ease;
+  }
+  @keyframes resultReveal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .result-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: calc(var(--sp) * 0.5);
+  }
+  .result h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.8rem, 9vw, 4.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--black);
+    margin-bottom: 6px;
+  }
+  .result-holiday {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--mid);
+    margin-bottom: calc(var(--sp) * 2);
+  }
+
+  .result-img-wrap {
+    margin-bottom: calc(var(--sp) * 2);
+  }
+  .result-img {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    filter: grayscale(20%);
+  }
+
+  .result-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--sp) * 0.5);
+    margin-bottom: calc(var(--sp) * 2);
+  }
+  .result-trait {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-desc {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.8;
+    color: var(--dark);
+    max-width: 520px;
+    margin-bottom: calc(var(--sp) * 2);
+  }
+
+  .btn-row {
+    display: flex;
+    gap: calc(var(--sp) * 0.5);
+    flex-wrap: wrap;
+  }
+
+  /* ── Breakdown ── */
+  .breakdown-toggle {
+    display: inline-block;
+    margin-top: calc(var(--sp) * 2);
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--mid);
+    padding-bottom: 4px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .breakdown-toggle:hover {
+    color: var(--black);
+    border-color: var(--black);
+  }
+
+  .breakdown {
+    margin-top: var(--sp);
+    padding-top: var(--sp);
+    border-top: 1px solid var(--border);
+  }
+  .breakdown h3 {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: var(--sp);
+  }
+  .breakdown-row {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--sp) * 0.5);
+    padding: 6px 0;
+  }
+  .breakdown-row img {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    flex-shrink: 0;
+    filter: grayscale(100%);
+  }
+  .breakdown-label {
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--mid);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .breakdown-bar-bg {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    position: relative;
+    overflow: visible;
+  }
+  .breakdown-bar-fill {
+    height: 2px;
+    position: absolute;
+    top: -0.5px;
+    left: 0;
+    background: var(--light);
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+  .breakdown-pct {
+    width: 36px;
+    text-align: right;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--light);
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .breakdown-row.winner .breakdown-label {
+    color: var(--black);
+    font-weight: 500;
+  }
+  .breakdown-row.winner .breakdown-pct { color: var(--black); }
+  .breakdown-row.winner .breakdown-bar-fill { background: var(--black); }
+  .breakdown-row.winner img { filter: grayscale(0%); }
+
+  /* ── Confetti ── */
+  .confetti-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    padding: calc(var(--sp) * 2) 0 0;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--light);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    :root { --sp: 16px; }
+    .intro-bottom h1 { font-size: 2.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- ── INTRO ── -->
+  <div id="intro" class="intro">
+    <div class="portrait-gallery">
+      <div class="portrait-frame">
+        <div class="portrait-inner" id="portraitInner"></div>
+      </div>
+    </div>
+    <div class="intro-overlay">
+      <div class="intro-tag">Birthday Edition</div>
+      <div class="portrait-label">
+        <span class="portrait-label-name" id="portraitName"></span>
+        <span class="portrait-label-date" id="portraitDate"></span>
+      </div>
+      <div class="intro-bottom">
+        <h1>Which<br><em>Hooley</em><br>Are You?</h1>
+        <p>Hooley has been blessing our Slack with seasonal profile photos all year. Take this very scientific quiz to discover yours.</p>
+        <button class="btn" onclick="startQuiz()">Take the Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div id="quiz" class="hidden">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span class="progress-label" id="progressLabel"></span>
+        <span class="progress-label" id="progressPct"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="question-card" id="questionCard"></div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div id="result" class="result hidden"></div>
+</div>
+
+<canvas id="confetti" class="confetti-canvas hidden"></canvas>
+
+<script>
+const HOOLEYS = {
+  bubble_wrap: {
+    name: "Bubble Wrap Hooley",
+    title: "The Protector",
+    holiday: "National Bubble Wrap Appreciation Day, Jan 27",
+    img: "images/bubble_wrap_day.jpeg",
+    traits: ["Careful", "Supportive", "Comfort-first", "Reliable"],
+    desc: "You're the person everyone goes to when things feel fragile. You wrap your team in a protective layer of thoughtfulness and always make sure nobody pops under pressure. Your superpower? Making people feel safe enough to take risks."
+  },
+  dracula: {
+    name: "Dracula Hooley",
+    title: "The Night Owl",
+    holiday: "World Dracula Day, May 26",
+    img: "images/dracula_day.jpeg",
+    traits: ["Mysterious", "Night owl", "Dramatic flair", "Deeply focused"],
+    desc: "You do your best work after the sun goes down and the Slack notifications quiet. There's an elegant intensity to how you operate. You might seem mysterious, but really you're just deeply focused. Also, you have impeccable taste."
+  },
+  mario: {
+    name: "Mario Hooley",
+    title: "The Problem Solver",
+    holiday: "National Mario Day, Mar 10",
+    img: "images/mario_day.jpeg",
+    traits: ["Persistent", "Resourceful", "Optimistic", "Leveling up"],
+    desc: "No obstacle is too big. Pipe blocked? You find another pipe. Boss fight? You already found the power-up. You approach every challenge like there's definitely a way through, and your optimism is contagious. Let's-a go."
+  },
+  periodic_table: {
+    name: "Periodic Table Hooley",
+    title: "The Scholar",
+    holiday: "National Periodic Table Day, Feb 7",
+    img: "images/periodic_table_day.jpeg",
+    traits: ["Curious", "Analytical", "Deep diver", "Knowledge seeker"],
+    desc: "You can't just know something works. You need to know WHY it works, and probably also its entire history and three adjacent fun facts. Your curiosity is your superpower, and your random expertise has saved the team more than once."
+  },
+  rubber_ducky: {
+    name: "Rubber Ducky Hooley",
+    title: "The Polished Professional",
+    holiday: "National Rubber Ducky Day, Jan 13",
+    img: "images/rubber_ducky_day.jpeg",
+    traits: ["Put-together", "Secretly playful", "Elegant", "Surprising"],
+    desc: "You show up buttoned-up and professional, but there's a wonderful weirdness hiding just below the surface. You're the person who sends the funniest messages in the most formal tone. Business in the front, rubber ducky party in the back."
+  },
+  scavenger_hunt: {
+    name: "Scavenger Hunt Hooley",
+    title: "The Detective",
+    holiday: "National Scavenger Hunt Day, May 24",
+    img: "images/scavenger_hunt_day.jpeg",
+    traits: ["Detail-oriented", "Finder of things", "Patient", "Thorough"],
+    desc: "If something's lost, you'll find it. A missing config file, a buried Slack thread from 6 months ago, the one person who knows the answer. You're endlessly patient in the search and you never give up until the mystery is solved."
+  },
+  spaghetti: {
+    name: "Spaghetti Hooley",
+    title: "The Connector",
+    holiday: "National Spaghetti Day, Jan 4",
+    img: "images/spaghetti_day.jpeg",
+    traits: ["Warm-hearted", "Brings people together", "Foodie", "Nostalgic"],
+    desc: "You're the person who turns a regular Tuesday into a moment. Whether it's organizing a team lunch, remembering someone's favorite snack, or just checking in, you bring people together like two dogs sharing a single strand of pasta."
+  },
+  static_electricity: {
+    name: "Static Electricity Hooley",
+    title: "The Spark",
+    holiday: "National Static Electricity Day, Jan 9",
+    img: "images/static_electricity_day.jpeg",
+    traits: ["High energy", "Unpredictable", "Electrifying", "Bold"],
+    desc: "You walk into a room and the energy shifts. Ideas fly off you like sparks. You're the one who says 'what if we...' and suddenly everyone's excited about something they didn't even know existed five minutes ago. Occasionally you shock people. They love it."
+  },
+  umbrella: {
+    name: "Umbrella Hooley",
+    title: "The Optimist",
+    holiday: "National Umbrella Day, Feb 10",
+    img: "images/umbrella_day.jpeg",
+    traits: ["Upbeat", "Prepared", "Finds the bright side", "Effortless"],
+    desc: "Rain? You brought a cocktail umbrella and a rooftop view. You have this beautiful ability to find delight in any situation. Not in a toxic-positivity way - you just genuinely see the world as a place full of tiny celebrations waiting to happen."
+  },
+  weatherperson: {
+    name: "Weatherperson Hooley",
+    title: "The Forecaster",
+    holiday: "National Weatherperson's Day, Feb 5",
+    img: "images/weatherperson_day.jpeg",
+    traits: ["Prepared", "Reads the room", "Strategic", "Communicator"],
+    desc: "You always know what's coming. Sprint deadline? You flagged it last week. Stakeholder mood shift? You adjusted the deck. You read the room like a doppler radar and you're never caught without your trench coat when the storm hits."
+  },
+  may_the_4th: {
+    name: "May the 4th Hooley",
+    title: "The Jedi",
+    holiday: "Star Wars Day, May 4",
+    img: "images/may_the_4th.jpeg",
+    traits: ["Wise", "Calm under pressure", "Mentor", "Quietly powerful"],
+    desc: "You operate with a quiet confidence that puts everyone around you at ease. In moments of chaos, you're the one saying 'let's think about this.' Your wisdom comes not from knowing all the answers, but from asking the right questions. The force is strong with this one."
+  },
+  collectors: {
+    name: "Collector's Day Hooley",
+    title: "The Completionist",
+    holiday: "National Collector's Day, Jul 11",
+    img: "images/collectors_day.jpeg",
+    traits: ["Data-driven", "Organized", "Thorough", "Achievement-hunter"],
+    desc: "You don't just do the thing. You track the thing, measure the thing, and create a beautiful dashboard about the thing. You're the Mythic Rare of coworkers: comprehensive, organized, and always striving for 100% completion. First edition."
+  },
+  science_fiction: {
+    name: "Science Fiction Hooley",
+    title: "The Visionary",
+    holiday: "National Science Fiction Day, Jan 2",
+    img: "images/science_fiction_day.jpeg",
+    traits: ["Futuristic thinker", "Imaginative", "Big-picture", "Ambitious"],
+    desc: "While everyone else is solving today's problems, you're already thinking about next quarter's. You see possibilities where others see constraints. Your ideas might sound wild at first, but give it six months and everyone will say 'wait, they were right.'"
+  }
+};
+
+const QUESTIONS = [
+  {
+    q: "It's 8:55am on Monday. What are you doing?",
+    opts: [
+      { text: "Already deep in a doc I started thinking about over the weekend", scores: { dracula: 2, periodic_table: 1, science_fiction: 1 } },
+      { text: "Scrolling Slack with coffee, easing into it", scores: { umbrella: 2, bubble_wrap: 1, rubber_ducky: 1 } },
+      { text: "Checking my dashboard to see what’s on fire", scores: { weatherperson: 2, collectors: 1, scavenger_hunt: 1 } },
+      { text: "Pinging the team channel with a meme to kick off the week", scores: { static_electricity: 2, spaghetti: 1, mario: 1 } }
+    ]
+  },
+  {
+    q: "How many people do you typically share a bottle of wine with?",
+    opts: [
+      { text: "1", scores: { dracula: 2, scavenger_hunt: 1, may_the_4th: 1 } },
+      { text: "2", scores: { rubber_ducky: 2, periodic_table: 1, bubble_wrap: 1 } },
+      { text: "3", scores: { spaghetti: 2, weatherperson: 1, collectors: 1 } },
+      { text: "4", scores: { mario: 2, umbrella: 1, scavenger_hunt: 1 } },
+      { text: "40, and whichever TSA agents want a glass too", scores: { static_electricity: 2, science_fiction: 1, spaghetti: 1 } }
+    ]
+  },
+  {
+    q: "Your team is planning a hackathon project. You suggest:",
+    opts: [
+      { text: "Something wildly ambitious that probably won’t work but would be incredible if it did", scores: { science_fiction: 2, static_electricity: 1, mario: 1 } },
+      { text: "A polished, well-scoped project that you can actually demo at the end", scores: { rubber_ducky: 2, collectors: 1, weatherperson: 1 } },
+      { text: "Something fun and team-bonding focused — the project is secondary", scores: { spaghetti: 2, umbrella: 1, bubble_wrap: 1 } },
+      { text: "Deep research into something nobody’s explored yet", scores: { periodic_table: 2, scavenger_hunt: 1, dracula: 1 } }
+    ]
+  },
+  {
+    q: "Pick a Slack status:",
+    opts: [
+      { text: "\u{1F52C} “In the lab”", scores: { periodic_table: 2, static_electricity: 1, science_fiction: 1 } },
+      { text: "\u{1F3AF} “Heads down”", scores: { mario: 2, dracula: 1, scavenger_hunt: 1 } },
+      { text: "\u{2600}\u{FE0F} “Vibing”", scores: { umbrella: 2, spaghetti: 1, rubber_ducky: 1 } },
+      { text: "\u{1F4CA} “Crunching numbers”", scores: { collectors: 2, weatherperson: 1, may_the_4th: 1 } },
+      { text: "\u{1F6E1}\u{FE0F} “Keeping the peace”", scores: { bubble_wrap: 2, may_the_4th: 1, spaghetti: 1 } }
+    ]
+  },
+  {
+    q: "Company offsite. Where do people find you?",
+    opts: [
+      { text: "Leading the trivia team to a crushing victory", scores: { periodic_table: 1, collectors: 2, scavenger_hunt: 1 } },
+      { text: "In a corner having a surprisingly deep 1:1 with someone from another team", scores: { dracula: 2, may_the_4th: 1, spaghetti: 1 } },
+      { text: "Singing karaoke like your life depends on it", scores: { static_electricity: 2, umbrella: 1, mario: 1 } },
+      { text: "You organized the whole thing", scores: { weatherperson: 2, bubble_wrap: 1, rubber_ducky: 1 } }
+    ]
+  },
+  {
+    q: "Speaking of offsite, what’s your karaoke song of choice?",
+    opts: [
+      { text: "“No Scrubs” by TLC", scores: { rubber_ducky: 2, weatherperson: 1, may_the_4th: 1 } },
+      { text: "“My Heart Will Go On” by Celine Dion", scores: { dracula: 2, spaghetti: 1, bubble_wrap: 1 } },
+      { text: "“Gloria” by Laura Branigan", scores: { static_electricity: 2, umbrella: 1, mario: 1 } },
+      { text: "“Mr. Brightside” by The Killers", scores: { spaghetti: 2, mario: 1, scavenger_hunt: 1 } },
+      { text: "“Teenage Dirtbag” by Wheatus", scores: { periodic_table: 2, science_fiction: 1, collectors: 1 } }
+    ]
+  },
+  {
+    q: "A coworker is having a rough day. You:",
+    opts: [
+      { text: "Send them a perfectly timed meme — humor heals", scores: { static_electricity: 1, umbrella: 2, mario: 1 } },
+      { text: "Quietly take something off their plate without making a big deal", scores: { bubble_wrap: 2, may_the_4th: 1, scavenger_hunt: 1 } },
+      { text: "Invite them to grab lunch or coffee — sometimes you just need to talk", scores: { spaghetti: 2, dracula: 1, rubber_ducky: 1 } },
+      { text: "Write up a clear summary of the situation so they can see it’s going to be fine", scores: { weatherperson: 1, collectors: 1, science_fiction: 2 } }
+    ]
+  },
+  {
+    q: "If you had to pick a superpower:",
+    opts: [
+      { text: "Time travel — imagine the debugging potential", scores: { science_fiction: 2, periodic_table: 1, collectors: 1 } },
+      { text: "Invisibility — ultimate focus mode", scores: { dracula: 2, scavenger_hunt: 1, bubble_wrap: 1 } },
+      { text: "Super speed — clear the backlog in an afternoon", scores: { mario: 2, static_electricity: 1, weatherperson: 1 } },
+      { text: "Telepathy — never misread a Slack message again", scores: { may_the_4th: 2, spaghetti: 1, rubber_ducky: 1 } },
+      { text: "Flight — mostly for the dramatic entrance to standup", scores: { umbrella: 1, static_electricity: 1, science_fiction: 1, rubber_ducky: 1 } }
+    ]
+  },
+  {
+    q: "What’s your favorite spot in NYC?",
+    opts: [
+      { text: "Central Park", scores: { umbrella: 2, may_the_4th: 1, bubble_wrap: 1 } },
+      { text: "BCD Tofu House", scores: { spaghetti: 2, scavenger_hunt: 1, dracula: 1 } },
+      { text: "Eleven Madison Park", scores: { rubber_ducky: 2, collectors: 1, weatherperson: 1 } },
+      { text: "Williamsburg Equinox", scores: { static_electricity: 2, mario: 1, bubble_wrap: 1 } },
+      { text: "Comedy Cellar", scores: { periodic_table: 2, science_fiction: 1, umbrella: 1 } }
+    ]
+  }
+];
+
+let currentQ = 0;
+const scores = {};
+Object.keys(HOOLEYS).forEach(k => scores[k] = 0);
+
+// Portrait gallery
+const portraitInner = document.getElementById('portraitInner');
+const portraitName = document.getElementById('portraitName');
+const portraitDate = document.getElementById('portraitDate');
+const hooleyEntries = Object.values(HOOLEYS);
+let portraitIndex = 0;
+let portraitInterval = null;
+
+hooleyEntries.forEach((h, i) => {
+  const img = document.createElement('img');
+  img.src = h.img;
+  img.alt = h.name;
+  if (i === 0) img.classList.add('active');
+  portraitInner.appendChild(img);
+});
+
+function updatePortraitLabel(h) {
+  portraitName.style.opacity = '0';
+  portraitDate.style.opacity = '0';
+  setTimeout(() => {
+    portraitName.textContent = h.title;
+    portraitDate.textContent = h.holiday.split(',')[1]?.trim() || '';
+    portraitName.style.opacity = '1';
+    portraitDate.style.opacity = '1';
+  }, 400);
+}
+
+updatePortraitLabel(hooleyEntries[0]);
+
+function cyclePortrait() {
+  const imgs = portraitInner.querySelectorAll('img');
+  imgs[portraitIndex].classList.remove('active');
+  portraitIndex = (portraitIndex + 1) % hooleyEntries.length;
+  imgs[portraitIndex].classList.add('active');
+  updatePortraitLabel(hooleyEntries[portraitIndex]);
+}
+
+portraitInterval = setInterval(cyclePortrait, 4000);
+
+
+function startQuiz() {
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  const pct = Math.round((currentQ / QUESTIONS.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `Question ${currentQ + 1} of ${QUESTIONS.length}`;
+  document.getElementById('progressPct').textContent = pct + '%';
+
+  const card = document.getElementById('questionCard');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = '';
+
+  let html = `<div class="question-num">Question ${currentQ + 1}</div>`;
+  html += `<h2>${q.q}</h2>`;
+  html += `<div class="options">`;
+  q.opts.forEach((opt, i) => {
+    html += `<button class="option-btn" onclick="selectOption(${i})">${opt.text}</button>`;
+  });
+  html += `</div>`;
+  card.innerHTML = html;
+}
+
+function selectOption(i) {
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.classList.remove('selected'));
+  btns[i].classList.add('selected');
+
+  const chosen = QUESTIONS[currentQ].opts[i];
+  Object.entries(chosen.scores).forEach(([k, v]) => scores[k] += v);
+
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ < QUESTIONS.length) {
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }, 350);
+}
+
+function showResult() {
+  document.getElementById('quiz').classList.add('hidden');
+
+  let best = '', bestScore = -1;
+  Object.entries(scores).forEach(([k, v]) => {
+    if (v > bestScore) { bestScore = v; best = k; }
+  });
+  const h = HOOLEYS[best];
+
+  const el = document.getElementById('result');
+  el.classList.remove('hidden');
+
+  const traitsHtml = h.traits.map(t => `<span class="result-trait">${t}</span>`).join('');
+
+  el.innerHTML = `
+    <p class="result-eyebrow">You are</p>
+    <h1>${h.title}</h1>
+    <p class="result-holiday">${h.holiday}</p>
+    <div class="result-img-wrap">
+      <img class="result-img" src="${h.img}" alt="${h.name}">
+    </div>
+    <div class="result-traits">${traitsHtml}</div>
+    <p class="result-desc">${h.desc}</p>
+    <div class="btn-row">
+      <button class="btn-fill" onclick="downloadImage('${h.img}', '${h.name}')">Save Photo</button>
+      <button class="btn-outline" onclick="launchConfetti()">More Confetti</button>
+      <button class="btn-outline" onclick="retake()">Retake</button>
+    </div>
+    <button class="breakdown-toggle" onclick="toggleBreakdown()">See full breakdown</button>
+    <div class="breakdown hidden" id="breakdown">${buildBreakdown(best)}</div>
+    <div class="footer">Made with questionable science for Hooley's birthday</div>
+  `;
+
+  launchConfetti();
+}
+
+function buildBreakdown(winner) {
+  const total = Object.values(scores).reduce((a, b) => a + b, 0) || 1;
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  let html = '<h3>Your Hooley DNA</h3>';
+  sorted.forEach(([key, val]) => {
+    const pct = Math.round((val / total) * 100);
+    const h = HOOLEYS[key];
+    const isWinner = key === winner ? ' winner' : '';
+    html += `
+      <div class="breakdown-row${isWinner}">
+        <img src="${h.img}" alt="${h.title}">
+        <span class="breakdown-label">${h.title}</span>
+        <div class="breakdown-bar-bg"><div class="breakdown-bar-fill" style="width:${pct}%"></div></div>
+        <span class="breakdown-pct">${pct}%</span>
+      </div>`;
+  });
+  return html;
+}
+
+function toggleBreakdown() {
+  const el = document.getElementById('breakdown');
+  const btn = document.querySelector('.breakdown-toggle');
+  el.classList.toggle('hidden');
+  btn.textContent = el.classList.contains('hidden')
+    ? 'See full breakdown'
+    : 'Hide breakdown';
+}
+
+function downloadImage(src, name) {
+  const a = document.createElement('a');
+  a.href = src;
+  a.download = name.replace(/\s+/g, '_').toLowerCase() + '.jpeg';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function retake() {
+  currentQ = 0;
+  Object.keys(scores).forEach(k => scores[k] = 0);
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('intro').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const confettiState = { pieces: [], animating: false, canvas: null, ctx: null };
+const CONFETTI_COLORS = ['#111','#333','#666','#999','#bbb','#ddd'];
+
+function makeParticle(originX, originY) {
+  const angle = Math.random() * Math.PI * 2;
+  const speed = Math.random() * 14 + 4;
+  const shape = Math.random();
+  return {
+    x: originX, y: originY,
+    vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 4,
+    vy: Math.sin(angle) * speed * -1 - Math.random() * 6,
+    w: shape < 0.3 ? Math.random() * 14 + 6 : Math.random() * 10 + 4,
+    h: shape < 0.3 ? Math.random() * 4 + 2 : (shape < 0.6 ? Math.random() * 10 + 4 : Math.random() * 8 + 4),
+    color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+    rot: Math.random() * 360,
+    vr: (Math.random() - 0.5) * 18,
+    gravity: 0.18 + Math.random() * 0.12,
+    drag: 0.98 + Math.random() * 0.015,
+    wobble: Math.random() * Math.PI * 2,
+    wobbleSpeed: Math.random() * 0.15 + 0.05,
+    life: 1,
+    decay: 0.003 + Math.random() * 0.004,
+    shape: shape < 0.3 ? 'ribbon' : (shape < 0.6 ? 'square' : 'circle')
+  };
+}
+
+function spawnBurst(count, originX, originY) {
+  for (let i = 0; i < count; i++) {
+    confettiState.pieces.push(makeParticle(originX, originY));
+  }
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confetti');
+  canvas.classList.remove('hidden');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  confettiState.canvas = canvas;
+  confettiState.ctx = ctx;
+
+  const w = canvas.width, h = canvas.height;
+
+  spawnBurst(200, w * 0.5, h * 0.35);
+  spawnBurst(150, w * 0.2, h * 0.5);
+  spawnBurst(150, w * 0.8, h * 0.5);
+  for (let i = 0; i < 120; i++) {
+    const p = makeParticle(0, h);
+    p.vx = Math.random() * 12 + 4;
+    p.vy = -(Math.random() * 16 + 8);
+    confettiState.pieces.push(p);
+  }
+  for (let i = 0; i < 120; i++) {
+    const p = makeParticle(w, h);
+    p.vx = -(Math.random() * 12 + 4);
+    p.vy = -(Math.random() * 16 + 8);
+    confettiState.pieces.push(p);
+  }
+  setTimeout(() => spawnBurst(200, w * 0.3, -20), 300);
+  setTimeout(() => spawnBurst(200, w * 0.7, -20), 500);
+  setTimeout(() => spawnBurst(150, w * 0.5, -20), 800);
+
+  if (!confettiState.animating) {
+    confettiState.animating = true;
+    drawConfetti();
+  }
+}
+
+function drawConfetti() {
+  const { canvas, ctx, pieces } = confettiState;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = pieces.length - 1; i >= 0; i--) {
+    const p = pieces[i];
+    p.vy += p.gravity;
+    p.vx *= p.drag;
+    p.vy *= p.drag;
+    p.x += p.vx + Math.sin(p.wobble) * 1.5;
+    p.y += p.vy;
+    p.rot += p.vr;
+    p.wobble += p.wobbleSpeed;
+    p.life -= p.decay;
+
+    if (p.life <= 0 || p.y > canvas.height + 50) {
+      pieces.splice(i, 1);
+      continue;
+    }
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot * Math.PI / 180);
+    ctx.globalAlpha = Math.min(1, p.life * 2);
+    ctx.fillStyle = p.color;
+
+    if (p.shape === 'ribbon') {
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    } else if (p.shape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(0, 0, p.w / 3, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    }
+    ctx.restore();
+  }
+
+  if (pieces.length > 0) {
+    requestAnimationFrame(drawConfetti);
+  } else {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.classList.add('hidden');
+    confettiState.animating = false;
+  }
+}
+</script>
+
+</body>
+</html>
