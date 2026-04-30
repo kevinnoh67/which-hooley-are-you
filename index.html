@@ -484,6 +484,124 @@
   .breakdown-row.winner .breakdown-bar-fill { background: var(--black); }
   .breakdown-row.winner img { filter: grayscale(0%); }
 
+  /* ── Library ── */
+  .intro-actions {
+    display: flex;
+    gap: calc(var(--sp) * 1.25);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn-quiet {
+    border-bottom-color: var(--mid);
+    color: var(--mid);
+  }
+  .btn-quiet:hover { color: var(--black); border-bottom-color: var(--black); opacity: 1; }
+
+  .library {
+    padding-top: calc(var(--sp) * 2);
+    animation: resultReveal 0.5s ease;
+  }
+  .library-header {
+    margin-bottom: calc(var(--sp) * 2.5);
+  }
+  .library-header h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.4rem, 7vw, 3.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--black);
+    margin-bottom: 6px;
+  }
+  .library-header h1 em { font-style: italic; }
+  .library-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--mid);
+    margin-bottom: var(--sp);
+  }
+
+  .library-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: calc(var(--sp) * 1.5);
+  }
+  @media (max-width: 560px) {
+    .library-grid { grid-template-columns: 1fr; }
+  }
+
+  .library-card {
+    display: flex;
+    flex-direction: column;
+  }
+  .library-card-img-wrap {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    overflow: hidden;
+    background: #e8e6e1;
+    margin-bottom: calc(var(--sp) * 0.75);
+  }
+  .library-card-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    filter: grayscale(20%);
+    transition: filter 0.3s ease, transform 0.5s ease;
+  }
+  .library-card:hover .library-card-img {
+    filter: grayscale(0%);
+    transform: scale(1.02);
+  }
+  .library-card-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--black);
+    margin-bottom: 2px;
+  }
+  .library-card-name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--mid);
+    margin-bottom: 4px;
+  }
+  .library-card-holiday {
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: calc(var(--sp) * 0.5);
+  }
+  .library-card-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin-bottom: calc(var(--sp) * 0.5);
+  }
+  .library-card-trait {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+  .library-card-desc {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--dark);
+  }
+
   /* ── Confetti ── */
   .confetti-canvas {
     position: fixed;
@@ -527,8 +645,26 @@
       <div class="intro-bottom">
         <h1>Which<br><em>Hooley</em><br>Are You?</h1>
         <p>Hooley has been blessing our Slack with seasonal profile photos all year. Take this very scientific quiz to discover yours.</p>
-        <button class="btn" onclick="startQuiz()">Take the Quiz</button>
+        <div class="intro-actions">
+          <button class="btn" onclick="startQuiz()">Take the Quiz</button>
+          <button class="btn btn-quiet" onclick="showLibrary()">Browse the Library</button>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ── LIBRARY ── -->
+  <div id="library" class="library hidden">
+    <div class="library-header">
+      <p class="result-eyebrow">The Collection</p>
+      <h1>The <em>Hooley</em> Library</h1>
+      <p class="library-sub">Every seasonal Hooley, in one place.</p>
+      <button class="btn" onclick="hideLibrary()">← Back</button>
+    </div>
+    <div class="library-grid" id="libraryGrid"></div>
+    <div class="btn-row" style="justify-content:center; margin-top: calc(var(--sp) * 2);">
+      <button class="btn-fill" onclick="hideLibrary(); startQuiz();">Take the Quiz</button>
+      <button class="btn-outline" onclick="hideLibrary()">← Back to Intro</button>
     </div>
   </div>
 
@@ -655,6 +791,38 @@ const HOOLEYS = {
     img: "images/science_fiction_day.jpeg",
     traits: ["Futuristic thinker", "Imaginative", "Big-picture", "Ambitious"],
     desc: "While everyone else is solving today's problems, you're already thinking about next quarter's. You see possibilities where others see constraints. Your ideas might sound wild at first, but give it six months and everyone will say 'wait, they were right.'"
+  },
+  valentines: {
+    name: "Valentine's Day Hooley",
+    title: "The Heart",
+    holiday: "Valentine's Day, Feb 14",
+    img: "images/valentines_day.jpeg",
+    traits: ["Big-hearted", "Thoughtful", "Generous", "Team glue"],
+    desc: "You remember birthdays. You sense when someone needs a check-in. You're the reason the team actually feels like a team — affection comes naturally to you, and it's the quiet glue that holds everything together. Love language: showing up."
+  },
+  kentucky_derby: {
+    name: "Kentucky Derby Hooley",
+    title: "The Tastemaker",
+    holiday: "Kentucky Derby Day, May 3",
+    img: "images/kentucky_derby_day.png",
+    traits: ["Stylish", "Ceremonial", "Theme-loving", "Big-occasion energy"],
+    desc: "You have a sixth sense for turning a regular Tuesday into An Event. Themed snacks, a custom playlist, a dress code nobody asked for — your enthusiasm is contagious and you make people feel like they showed up to something special. Hat optional but encouraged."
+  },
+  st_patricks: {
+    name: "St. Patrick's Day Hooley",
+    title: "The Lucky Charm",
+    holiday: "St. Patrick's Day, Mar 17",
+    img: "images/st_patricks_day.png",
+    traits: ["Lucky", "Festive", "Magnetic", "Up for anything"],
+    desc: "Things just… work out for you. Not because you don't try, but because your warmth and good humor make people want to bend the rules in your favor. You're the friend who knows the bouncer, finds the secret menu, and turns one round into five."
+  },
+  winter_solstice: {
+    name: "Winter Solstice Hooley",
+    title: "The Quiet Force",
+    holiday: "Winter Solstice, Dec 21",
+    img: "images/winter_solstice.png",
+    traits: ["Introspective", "Patient", "Grounded", "Deep"],
+    desc: "You move at your own pace and trust the long arc of things. While everyone else is scrambling, you're holding space for the team to slow down, breathe, and remember why we're doing this. The quiet ones often see the most."
   }
 };
 
@@ -662,87 +830,87 @@ const QUESTIONS = [
   {
     q: "It's 8:55am on Monday. What are you doing?",
     opts: [
-      { text: "Already deep in a doc I started thinking about over the weekend", scores: { dracula: 2, periodic_table: 1, science_fiction: 1 } },
-      { text: "Scrolling Slack with coffee, easing into it", scores: { umbrella: 2, bubble_wrap: 1, rubber_ducky: 1 } },
-      { text: "Checking my dashboard to see what’s on fire", scores: { weatherperson: 2, collectors: 1, scavenger_hunt: 1 } },
-      { text: "Pinging the team channel with a meme to kick off the week", scores: { static_electricity: 2, spaghetti: 1, mario: 1 } }
+      { text: "Already deep in a doc I started thinking about over the weekend", scores: { dracula: 2, periodic_table: 1, science_fiction: 1, winter_solstice: 1 } },
+      { text: "Scrolling Slack with coffee, easing into it", scores: { umbrella: 2, bubble_wrap: 1, rubber_ducky: 1, valentines: 1 } },
+      { text: "Checking my dashboard to see what’s on fire", scores: { weatherperson: 2, collectors: 1, scavenger_hunt: 1, kentucky_derby: 1 } },
+      { text: "Pinging the team channel with a meme to kick off the week", scores: { static_electricity: 2, spaghetti: 1, mario: 1, st_patricks: 1 } }
     ]
   },
   {
     q: "How many people do you typically share a bottle of wine with?",
     opts: [
-      { text: "1", scores: { dracula: 2, scavenger_hunt: 1, may_the_4th: 1 } },
-      { text: "2", scores: { rubber_ducky: 2, periodic_table: 1, bubble_wrap: 1 } },
-      { text: "3", scores: { spaghetti: 2, weatherperson: 1, collectors: 1 } },
-      { text: "4", scores: { mario: 2, umbrella: 1, scavenger_hunt: 1 } },
-      { text: "40, and whichever TSA agents want a glass too", scores: { static_electricity: 2, science_fiction: 1, spaghetti: 1 } }
+      { text: "1", scores: { dracula: 2, scavenger_hunt: 1, may_the_4th: 1, winter_solstice: 2 } },
+      { text: "2", scores: { rubber_ducky: 2, periodic_table: 1, bubble_wrap: 1, valentines: 2 } },
+      { text: "3", scores: { spaghetti: 2, weatherperson: 1, collectors: 1, valentines: 1 } },
+      { text: "4", scores: { mario: 2, umbrella: 1, scavenger_hunt: 1, st_patricks: 1 } },
+      { text: "40, and whichever TSA agents want a glass too", scores: { static_electricity: 2, science_fiction: 1, spaghetti: 1, st_patricks: 2 } }
     ]
   },
   {
     q: "Your team is planning a hackathon project. You suggest:",
     opts: [
       { text: "Something wildly ambitious that probably won’t work but would be incredible if it did", scores: { science_fiction: 2, static_electricity: 1, mario: 1 } },
-      { text: "A polished, well-scoped project that you can actually demo at the end", scores: { rubber_ducky: 2, collectors: 1, weatherperson: 1 } },
-      { text: "Something fun and team-bonding focused — the project is secondary", scores: { spaghetti: 2, umbrella: 1, bubble_wrap: 1 } },
-      { text: "Deep research into something nobody’s explored yet", scores: { periodic_table: 2, scavenger_hunt: 1, dracula: 1 } }
+      { text: "A polished, well-scoped project that you can actually demo at the end", scores: { rubber_ducky: 2, collectors: 1, weatherperson: 1, kentucky_derby: 2 } },
+      { text: "Something fun and team-bonding focused — the project is secondary", scores: { spaghetti: 2, umbrella: 1, bubble_wrap: 1, valentines: 1, st_patricks: 1 } },
+      { text: "Deep research into something nobody’s explored yet", scores: { periodic_table: 2, scavenger_hunt: 1, dracula: 1, winter_solstice: 1 } }
     ]
   },
   {
     q: "Pick a Slack status:",
     opts: [
       { text: "\u{1F52C} “In the lab”", scores: { periodic_table: 2, static_electricity: 1, science_fiction: 1 } },
-      { text: "\u{1F3AF} “Heads down”", scores: { mario: 2, dracula: 1, scavenger_hunt: 1 } },
-      { text: "\u{2600}\u{FE0F} “Vibing”", scores: { umbrella: 2, spaghetti: 1, rubber_ducky: 1 } },
+      { text: "\u{1F3AF} “Heads down”", scores: { mario: 2, dracula: 1, scavenger_hunt: 1, winter_solstice: 1 } },
+      { text: "\u{2600}\u{FE0F} “Vibing”", scores: { umbrella: 2, spaghetti: 1, rubber_ducky: 1, valentines: 1, st_patricks: 1 } },
       { text: "\u{1F4CA} “Crunching numbers”", scores: { collectors: 2, weatherperson: 1, may_the_4th: 1 } },
-      { text: "\u{1F6E1}\u{FE0F} “Keeping the peace”", scores: { bubble_wrap: 2, may_the_4th: 1, spaghetti: 1 } }
+      { text: "\u{1F6E1}\u{FE0F} “Keeping the peace”", scores: { bubble_wrap: 2, may_the_4th: 1, spaghetti: 1, winter_solstice: 1 } }
     ]
   },
   {
     q: "Company offsite. Where do people find you?",
     opts: [
       { text: "Leading the trivia team to a crushing victory", scores: { periodic_table: 1, collectors: 2, scavenger_hunt: 1 } },
-      { text: "In a corner having a surprisingly deep 1:1 with someone from another team", scores: { dracula: 2, may_the_4th: 1, spaghetti: 1 } },
-      { text: "Singing karaoke like your life depends on it", scores: { static_electricity: 2, umbrella: 1, mario: 1 } },
-      { text: "You organized the whole thing", scores: { weatherperson: 2, bubble_wrap: 1, rubber_ducky: 1 } }
+      { text: "In a corner having a surprisingly deep 1:1 with someone from another team", scores: { dracula: 2, may_the_4th: 1, spaghetti: 1, valentines: 1, winter_solstice: 1 } },
+      { text: "Singing karaoke like your life depends on it", scores: { static_electricity: 2, umbrella: 1, mario: 1, st_patricks: 2 } },
+      { text: "You organized the whole thing", scores: { weatherperson: 2, bubble_wrap: 1, rubber_ducky: 1, kentucky_derby: 2 } }
     ]
   },
   {
     q: "Speaking of offsite, what’s your karaoke song of choice?",
     opts: [
-      { text: "“No Scrubs” by TLC", scores: { rubber_ducky: 2, weatherperson: 1, may_the_4th: 1 } },
-      { text: "“My Heart Will Go On” by Celine Dion", scores: { dracula: 2, spaghetti: 1, bubble_wrap: 1 } },
-      { text: "“Gloria” by Laura Branigan", scores: { static_electricity: 2, umbrella: 1, mario: 1 } },
-      { text: "“Mr. Brightside” by The Killers", scores: { spaghetti: 2, mario: 1, scavenger_hunt: 1 } },
-      { text: "“Teenage Dirtbag” by Wheatus", scores: { periodic_table: 2, science_fiction: 1, collectors: 1 } }
+      { text: "“No Scrubs” by TLC", scores: { rubber_ducky: 2, weatherperson: 1, may_the_4th: 1, kentucky_derby: 1 } },
+      { text: "“My Heart Will Go On” by Celine Dion", scores: { dracula: 2, spaghetti: 1, bubble_wrap: 1, valentines: 2 } },
+      { text: "“Gloria” by Laura Branigan", scores: { static_electricity: 2, umbrella: 1, mario: 1, st_patricks: 1 } },
+      { text: "“Mr. Brightside” by The Killers", scores: { spaghetti: 2, mario: 1, scavenger_hunt: 1, st_patricks: 1 } },
+      { text: "“Teenage Dirtbag” by Wheatus", scores: { periodic_table: 2, science_fiction: 1, collectors: 1, winter_solstice: 1 } }
     ]
   },
   {
     q: "A coworker is having a rough day. You:",
     opts: [
-      { text: "Send them a perfectly timed meme — humor heals", scores: { static_electricity: 1, umbrella: 2, mario: 1 } },
-      { text: "Quietly take something off their plate without making a big deal", scores: { bubble_wrap: 2, may_the_4th: 1, scavenger_hunt: 1 } },
-      { text: "Invite them to grab lunch or coffee — sometimes you just need to talk", scores: { spaghetti: 2, dracula: 1, rubber_ducky: 1 } },
+      { text: "Send them a perfectly timed meme — humor heals", scores: { static_electricity: 1, umbrella: 2, mario: 1, st_patricks: 1 } },
+      { text: "Quietly take something off their plate without making a big deal", scores: { bubble_wrap: 2, may_the_4th: 1, scavenger_hunt: 1, winter_solstice: 2 } },
+      { text: "Invite them to grab lunch or coffee — sometimes you just need to talk", scores: { spaghetti: 2, dracula: 1, rubber_ducky: 1, valentines: 2 } },
       { text: "Write up a clear summary of the situation so they can see it’s going to be fine", scores: { weatherperson: 1, collectors: 1, science_fiction: 2 } }
     ]
   },
   {
     q: "If you had to pick a superpower:",
     opts: [
-      { text: "Time travel — imagine the debugging potential", scores: { science_fiction: 2, periodic_table: 1, collectors: 1 } },
-      { text: "Invisibility — ultimate focus mode", scores: { dracula: 2, scavenger_hunt: 1, bubble_wrap: 1 } },
+      { text: "Time travel — imagine the debugging potential", scores: { science_fiction: 2, periodic_table: 1, collectors: 1, winter_solstice: 1 } },
+      { text: "Invisibility — ultimate focus mode", scores: { dracula: 2, scavenger_hunt: 1, bubble_wrap: 1, winter_solstice: 1 } },
       { text: "Super speed — clear the backlog in an afternoon", scores: { mario: 2, static_electricity: 1, weatherperson: 1 } },
-      { text: "Telepathy — never misread a Slack message again", scores: { may_the_4th: 2, spaghetti: 1, rubber_ducky: 1 } },
-      { text: "Flight — mostly for the dramatic entrance to standup", scores: { umbrella: 1, static_electricity: 1, science_fiction: 1, rubber_ducky: 1 } }
+      { text: "Telepathy — never misread a Slack message again", scores: { may_the_4th: 2, spaghetti: 1, rubber_ducky: 1, valentines: 1 } },
+      { text: "Flight — mostly for the dramatic entrance to standup", scores: { umbrella: 1, static_electricity: 1, science_fiction: 1, rubber_ducky: 1, kentucky_derby: 2 } }
     ]
   },
   {
     q: "What’s your favorite spot in NYC?",
     opts: [
-      { text: "Central Park", scores: { umbrella: 2, may_the_4th: 1, bubble_wrap: 1 } },
+      { text: "Central Park", scores: { umbrella: 2, may_the_4th: 1, bubble_wrap: 1, valentines: 1, winter_solstice: 1 } },
       { text: "BCD Tofu House", scores: { spaghetti: 2, scavenger_hunt: 1, dracula: 1 } },
-      { text: "Eleven Madison Park", scores: { rubber_ducky: 2, collectors: 1, weatherperson: 1 } },
-      { text: "Williamsburg Equinox", scores: { static_electricity: 2, mario: 1, bubble_wrap: 1 } },
-      { text: "Comedy Cellar", scores: { periodic_table: 2, science_fiction: 1, umbrella: 1 } }
+      { text: "Eleven Madison Park", scores: { rubber_ducky: 2, collectors: 1, weatherperson: 1, kentucky_derby: 1 } },
+      { text: "Williamsburg Equinox", scores: { static_electricity: 2, mario: 1, bubble_wrap: 1, st_patricks: 1 } },
+      { text: "Comedy Cellar", scores: { periodic_table: 2, science_fiction: 1, umbrella: 1, st_patricks: 1 } }
     ]
   }
 ];
@@ -793,8 +961,41 @@ portraitInterval = setInterval(cyclePortrait, 4000);
 
 function startQuiz() {
   document.getElementById('intro').classList.add('hidden');
+  document.getElementById('library').classList.add('hidden');
   document.getElementById('quiz').classList.remove('hidden');
   renderQuestion();
+}
+
+function renderLibrary() {
+  const grid = document.getElementById('libraryGrid');
+  grid.innerHTML = Object.values(HOOLEYS).map(h => {
+    const traits = h.traits.map(t => `<span class="library-card-trait">${t}</span>`).join('');
+    return `
+      <div class="library-card">
+        <div class="library-card-img-wrap">
+          <img class="library-card-img" src="${h.img}" alt="${h.name}" loading="lazy">
+        </div>
+        <div class="library-card-title">${h.title}</div>
+        <div class="library-card-name">${h.name}</div>
+        <div class="library-card-holiday">${h.holiday}</div>
+        <div class="library-card-traits">${traits}</div>
+        <p class="library-card-desc">${h.desc}</p>
+      </div>
+    `;
+  }).join('');
+}
+
+function showLibrary() {
+  renderLibrary();
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('library').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+function hideLibrary() {
+  document.getElementById('library').classList.add('hidden');
+  document.getElementById('intro').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'auto' });
 }
 
 function renderQuestion() {
@@ -919,7 +1120,12 @@ function retake() {
 }
 
 const confettiState = { pieces: [], animating: false, canvas: null, ctx: null };
-const CONFETTI_COLORS = ['#111','#333','#666','#999','#bbb','#ddd'];
+const CONFETTI_COLORS = [
+  '#FF3B6B', '#FF6B3B', '#FFB347', '#FFD93D',
+  '#6BCB77', '#4DD0E1', '#4D96FF', '#7C4DFF',
+  '#C04DFF', '#FF4DCB', '#FF6F91', '#00C9A7',
+  '#F9F871', '#FF9671'
+];
 
 function makeParticle(originX, originY) {
   const angle = Math.random() * Math.PI * 2;
